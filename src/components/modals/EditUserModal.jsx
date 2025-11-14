@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, User, Mail, Phone, Building } from 'lucide-react';
 
-const AddUserModal = ({ isOpen, onClose, onAddUser }) => {
+const EditUserModal = ({ isOpen, onClose, onEditUser, user }) => {
   const [formData, setFormData] = useState({
-    first_name: '',      // Correct field name for API
-    last_name: '',       // Correct field name for API
+    first_name: '',
+    last_name: '',
     email: '',
     phone: '',
     department: '',
@@ -14,6 +14,20 @@ const AddUserModal = ({ isOpen, onClose, onAddUser }) => {
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        first_name: user.first_name || '',
+        last_name: user.last_name || '',
+        email: user.email || '',
+        phone: user.phone || '',
+        department: user.department || '',
+        role: user.role || 'user',
+        status: user.status || 'active'
+      });
+    }
+  }, [user]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -67,28 +81,15 @@ const AddUserModal = ({ isOpen, onClose, onAddUser }) => {
     setLoading(true);
     
     try {
-      // Send the form data directly - no need to transform it
-      // The field names already match your API (first_name, last_name, etc.)
-      await onAddUser(formData);
-      handleClose();
+      await onEditUser(formData);
     } catch (error) {
-      // Error is handled in the parent component
-      console.error('Error in AddUserModal:', error);
+      console.error('Error in EditUserModal:', error);
     } finally {
       setLoading(false);
     }
   };
 
   const handleClose = () => {
-    setFormData({
-      first_name: '',
-      last_name: '',
-      email: '',
-      phone: '',
-      department: '',
-      role: 'user',
-      status: 'active'
-    });
     setErrors({});
     setLoading(false);
     onClose();
@@ -106,8 +107,8 @@ const AddUserModal = ({ isOpen, onClose, onAddUser }) => {
               <User className="w-5 h-5 text-blue-600" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-gray-900">Add New User</h2>
-              <p className="text-sm text-gray-600">Fill in the user details below</p>
+              <h2 className="text-xl font-bold text-gray-900">Edit User</h2>
+              <p className="text-sm text-gray-600">Update user details below</p>
             </div>
           </div>
           <button
@@ -307,10 +308,10 @@ const AddUserModal = ({ isOpen, onClose, onAddUser }) => {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Adding...
+                  Updating...
                 </>
               ) : (
-                'Add User'
+                'Update User'
               )}
             </button>
           </div>
@@ -320,4 +321,4 @@ const AddUserModal = ({ isOpen, onClose, onAddUser }) => {
   );
 };
 
-export default AddUserModal;
+export default EditUserModal;

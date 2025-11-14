@@ -16,6 +16,9 @@ import Settings from './pages/admin/Settings'
 const App = () => {
   return (
     <Routes>
+
+
+       {/* Protected Admin Routes */}
       <Route path='/' element={<Main/>}>
         <Route index element={<Dashboard/>} />
           <Route path="analytics" element={<Analytics/>} />
